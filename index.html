@@ -66,7 +66,7 @@
     </select>
     <button id="sendBtn">Send</button>
     <div class="status" id="statusMsg"></div>
-    <div class="status" id="debugLog" style="color:#555;font-size:0.9rem;margin-top:0.5rem;"></div>
+    <div class="status" id="debugLog" style="color:#222;background:#ffe;border:1px solid #ccc;padding:0.5rem;margin-top:0.5rem;min-height:1.2em;"></div>
   </div>
 
   <script>
@@ -97,10 +97,12 @@
       const message = messageInput.value.trim();
       const recipient = recipientSelect.value;
       debugLog.textContent = '';
+      statusMsg.textContent = '';
       if (!message) {
         statusMsg.textContent = "Please enter a message.";
         statusMsg.style.color = '#dc3545';
         debugLog.textContent = 'No message entered.';
+        setTimeout(() => { statusMsg.textContent = ''; }, 3000);
         return;
       }
       // Save to Firebase
@@ -116,12 +118,14 @@
           statusMsg.style.color = '#28a745';
           messageInput.value = '';
           debugLog.textContent = `Success: Message stored at key ${ref.key}`;
+          setTimeout(() => { statusMsg.textContent = ''; }, 3000);
         })
         .catch((error) => {
           statusMsg.textContent = "Error sending message.";
           statusMsg.style.color = '#dc3545';
-          debugLog.textContent = `Error: ${error.message}`;
+          debugLog.textContent = `Error: ${error.message}\nCheck console for details.`;
           console.error('Firebase error:', error);
+          setTimeout(() => { statusMsg.textContent = ''; }, 5000);
         });
     });
   </script>
