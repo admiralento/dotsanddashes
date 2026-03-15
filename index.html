@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dots and Dashes</title>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      min-height: 100vh;
+    }
+    .container {
+      background: #fff;
+      padding: 2rem;
+      margin-top: 3rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 1rem;
+    }
+    input, select, button {
+      font-size: 1rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .status {
+      text-align: center;
+      color: #28a745;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dots and Dashes</h1>
+    <input type="text" id="messageInput" placeholder="Type your message..." maxlength="100">
+    <select id="recipientSelect">
+      <option value="Him">Him</option>
+      <option value="Her">Her</option>
+    </select>
+    <button id="sendBtn">Send</button>
+    <div class="status" id="statusMsg"></div>
+  </div>
+
+  <script>
+    // Firebase configuration (placeholders)
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      databaseURL: "YOUR_DATABASE_URL",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // UI Elements
+    const messageInput = document.getElementById('messageInput');
+    const recipientSelect = document.getElementById('recipientSelect');
+    const sendBtn = document.getElementById('sendBtn');
+    const statusMsg = document.getElementById('statusMsg');
+
+    sendBtn.addEventListener('click', () => {
+      const message = messageInput.value.trim();
+      const recipient = recipientSelect.value;
+      if (!message) {
+        statusMsg.textContent = "Please enter a message.";
+        statusMsg.style.color = '#dc3545';
+        return;
+      }
+      // Save to Firebase
+      const entry = {
+        message,
+        recipient,
+        timestamp: Date.now()
+      };
+      db.ref('messages').push(entry)
+        .then(() => {
+          statusMsg.textContent = "Message sent!";
+          statusMsg.style.color = '#28a745';
+          messageInput.value = '';
+        })
+        .catch((error) => {
+          statusMsg.textContent = "Error sending message.";
+          statusMsg.style.color = '#dc3545';
+        });
+    });
+  </script>
+</body>
+</html>
